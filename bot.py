@@ -97,5 +97,11 @@ async def on_member_join(member):
     for channel in member.guild.channels:
         if str(channel) == "general":
             await channel.send_message(f"""Добро пожаловать на сервер клоун! {member.mention}""")
+@bot.event
+async def on_member_update(before, after):
+    # личное приветствие для @angel4xranitel#6504
+    if str(before.status) == "offline" and before.name == 'angel4xranitel':
+        if str(after.status) == "online" and after.name == 'angel4xranitel':
+            await after.send('Как дела? :wink:')
 
 bot.run(os.environ.get("BOT_TOKEN"))
