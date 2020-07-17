@@ -58,28 +58,30 @@ class Game(commands.Cog):
 
     @commands.command(name='ктоя')
     async def _WhoAmI(self, ctx: commands.Context):
-        members = ctx.author.voice.channel.members
-        members = [member for member in members if member.bot==False]
-        if (len(members)>1):
-            members_mentions = [member.mention for member in members]
-            members_str = ', '.join(members_mentions)
-            await ctx.send(f'Будет сделано, {ctx.author.mention}! Провожу игру "Кто я?" в канале {ctx.author.voice.channel}. \n Участники: {members_str}.')
-            with open('words.json','r', encoding = 'utf-8') as words_file:
-                words_dict = json.load(words_file)
-            words = list(itertools.chain.from_iterable(words_dict.values()))
-            del words_dict
-            selected_words = random.sample(words, len(members)) 
-            del words
-            couples = [(members[i],selected_words[i]) for i in range(len(members))]
-            for member in members:
-                msg = ''
-                for chosen in couples:
-                    if chosen[0] != member:
-                        msg += f'{chosen[0].nick} - {chosen[1]}\n'
-                await member.send(msg)
+        if ctx.author.voice:
+            members = ctx.author.voice.channel.members
+            members = [member for member in members if member.bot==False]
+            if (len(members)>1):
+                members_mentions = [member.mention for member in members]
+                members_str = ', '.join(members_mentions)
+                await ctx.send(f'Будет сделано, {ctx.author.mention}! Провожу игру "Кто я?" в канале {ctx.author.voice.channel}. \n Участники: {members_str}.')
+                with open('words.json','r', encoding = 'utf-8') as words_file:
+                    words_dict = json.load(words_file)
+                words = list(itertools.chain.from_iterable(words_dict.values()))
+                del words_dict
+                selected_words = random.sample(words, len(members)) 
+                del words
+                couples = [(members[i],selected_words[i]) for i in range(len(members))]
+                for member in members:
+                    msg = ''
+                    for chosen in couples:
+                        if chosen[0] != member:
+                            msg += f'{chosen[0].nick} - {chosen[1]}\n'
+                    await member.send(msg)
+            else:
+                await ctx.send(f'Извини, {ctx.author.mention}, но эта игра для двух и более человек.')
         else:
-            await ctx.send(f'Извини, {ctx.author.mention}, но эта игра для двух и более человек.')
-
+            await ctx.send(f'Извини, {ctx.author.mention}, но для того, чтобы играть тебе с участниками нужно находится в голосовом канале.')
         
     
 
